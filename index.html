@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fome no Mundo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      overflow: hidden;
+    }
+
+    .tela {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 2s;
+    }
+
+    #tela-inicial {
+      opacity: 1;
+      background: #222;
+      z-index: 2;
+      display: flex;
+    }
+
+    #tela-inicial button {
+      margin-top: 20px;
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #e74c3c;
+      color: white;
+      transition: 0.3s;
+    }
+
+    #tela-inicial button:hover {
+      background: #c0392b;
+    }
+
+    .mensagem {
+      background: rgba(0,0,0,0.6);
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 800px;
+      font-size: 26px;
+      z-index: 2;
+    }
+
+    iframe {
+      width: 80%;
+      height: 450px;
+      border: none;
+      border-radius: 12px;
+      z-index: 1;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div id="tela-inicial" class="tela">
+    <h1>Bem-vindo</h1>
+    <p>Clique abaixo para começar</p>
+    <button onclick="iniciarAnimacao()">Entrar</button>
+  </div>
+
+  <div id="cena1" class="tela">
+    <div class="mensagem">Milhares de crianças fazem filas todos os dias para conseguir um prato de comida.</div>
+  </div>
+
+  <div id="cena2" class="tela">
+    <div class="mensagem">Pessoas em todo o mundo sofrem e choram com a dor da fome.</div>
+  </div>
+
+  <div id="cena3" class="tela">
+    <div id="mensagemCena3" class="mensagem">A fome atinge diversos países — milhões de vidas estão em risco.</div>
+  </div>
+
+  <div id="videoTela" class="tela">
+    <iframe id="videoYouTube" src="https://www.youtube.com/embed/JQ9iJ32h0Zk?autoplay=1" allowfullscreen></iframe>
+  </div>
+
+  <div id="telaFinal" class="tela">
+    <div class="mensagem">Obrigado por assistir! Reflita sobre a fome no mundo e compartilhe esta mensagem de conscientização.</div>
+  </div>
+
+  <script>
+    function preloadImages(urls, callback){
+      let loaded = 0;
+      urls.forEach(url => {
+        let img = new Image();
+        img.src = url;
+        img.onload = () => {
+          loaded++;
+          if(loaded === urls.length){
+            callback();
+          }
+        };
+      });
+    }
+
+    function iniciarAnimacao() {
+      const imagens = ['cena1.jpg','cena2.jpg','cena3.jpg','fundo video.jpg'];
+
+      preloadImages(imagens, () => {
+        document.getElementById('cena1').style.backgroundImage = 'url("cena1.jpg")';
+        document.getElementById('cena2').style.backgroundImage = 'url("cena2.jpg")';
+        document.getElementById('cena3').style.backgroundImage = 'url("cena3.jpg")';
+
+        document.getElementById('tela-inicial').style.opacity = 0;
+        setTimeout(() => { document.getElementById('tela-inicial').style.display = 'none'; }, 2000);
+
+        let cenas = ['cena1','cena2','cena3'];
+        let i = 0;
+
+        function mostrarCena(){
+          if(i > 0){
+            let anterior = document.getElementById(cenas[i-1]);
+            anterior.style.opacity = 0;
+            setTimeout(()=>{ anterior.style.display = 'none'; }, 2000);
+          }
+          if(i < cenas.length){
+            let atual = document.getElementById(cenas[i]);
+            atual.style.display = 'flex';
+            setTimeout(()=>{ atual.style.opacity = 1; }, 50);
+            i++;
+            if(i < cenas.length){
+              setTimeout(mostrarCena, 8000);
+            } else {
+              setTimeout(iniciarVideo, 8000);
+            }
+          }
+        }
+
+        function iniciarVideo(){
+          // Esconde o texto da cena 3
+          document.getElementById('mensagemCena3').style.display = 'none';
+
+          let videoTela = document.getElementById('videoTela');
+          videoTela.style.backgroundImage = 'url("fundo video.jpg")';
+          videoTela.style.display = 'flex';
+          setTimeout(()=>{ videoTela.style.opacity = 1; }, 50);
+
+          // Redireciona automaticamente para tela final após 2 minutos (ou ajuste conforme o tempo do vídeo)
+          setTimeout(()=>{
+            videoTela.style.opacity = 0;
+            setTimeout(()=>{
+              videoTela.style.display = 'none';
+              let final = document.getElementById('telaFinal');
+              final.style.display = 'flex';
+              setTimeout(()=>{ final.style.opacity = 1; }, 50);
+            }, 2000);
+          }, 120000); // 120000ms = 2 minutos
+        }
+
+        mostrarCena();
+      });
+    }
+  </script>
+
+</body>
+</html>
